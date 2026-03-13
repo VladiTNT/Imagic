@@ -3,6 +3,7 @@ package process_test
 import (
 	"image"
 	"image/color"
+	"os"
 	"testing"
 
 	"github.com/VladiTNT/imagic/src"
@@ -101,7 +102,55 @@ func TestBlend(t *testing.T) {
 		return
 	}
 
-	err = src.WriteImageToFile(process.Blend(img, color.RGBA{R: 0, G: 0, B: 255, A: 255}), format, "../assets/test/blend.png")
+	err = src.WriteImageToFile(process.Blend(img, color.RGBA{R: 255, G: 255, B: 255, A: 255}), format, "../assets/test/blend.png")
+	if err != nil {
+		t.Errorf("Failed to write image: %v\n", err)
+		return
+	}
+}
+
+func TestBlur(t *testing.T) {
+	img, format, err := src.GetImageFromFile("../assets/base/test.png")
+	if err != nil {
+		t.Errorf("Failed to load image: %v\n", err)
+		return
+	}
+
+	err = src.WriteImageToFile(process.Blur(img), format, "../assets/test/blur.png")
+	if err != nil {
+		t.Errorf("Failed to write image: %v\n", err)
+		return
+	}
+}
+
+func TestToAscii(t *testing.T) {
+	img, _, err := src.GetImageFromFile("../assets/base/test.png")
+	if err != nil {
+		t.Errorf("Failed to load image: %v\n", err)
+		return
+	}
+
+	err = os.WriteFile("../assets/test/toAscii.txt", process.ToAscii(img), 0755)
+	if err != nil {
+		t.Errorf("Failed to write file: %v\n", err)
+		return
+	}
+}
+
+func TestDrawImage(t *testing.T) {
+	target, format, err := src.GetImageFromFile("../assets/base/colors.png")
+	if err != nil {
+		t.Errorf("Failed to load image: %v\n", err)
+		return
+	}
+
+	subject, _, err := src.GetImageFromFile("../assets/base/test.png")
+	if err != nil {
+		t.Errorf("Failed to load image: %v\n", err)
+		return
+	}
+
+	err = src.WriteImageToFile(process.DrawImage(target, subject, image.Pt(20, 20)), format, "../assets/test/draw.png")
 	if err != nil {
 		t.Errorf("Failed to write image: %v\n", err)
 		return
