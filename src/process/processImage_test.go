@@ -2,6 +2,7 @@ package process_test
 
 import (
 	"image"
+	"image/color"
 	"testing"
 
 	"github.com/VladiTNT/imagic/src"
@@ -88,7 +89,21 @@ func TestContrast(t *testing.T) {
 
 	err = src.WriteImageToFile(process.ContrastAndBrightness(img, 50, 20), format, "../assets/test/contrast.png")
 	if err != nil {
-		t.Errorf("Failed to write image %v\n", err)
+		t.Errorf("Failed to write image: %v\n", err)
+		return
+	}
+}
+
+func TestBlend(t *testing.T) {
+	img, format, err := src.GetImageFromFile("../assets/base/test.png")
+	if err != nil {
+		t.Errorf("Failed to load image: %v\n", err)
+		return
+	}
+
+	err = src.WriteImageToFile(process.Blend(img, color.RGBA{R: 0, G: 0, B: 255, A: 255}), format, "../assets/test/blend.png")
+	if err != nil {
+		t.Errorf("Failed to write image: %v\n", err)
 		return
 	}
 }

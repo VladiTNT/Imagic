@@ -11,3 +11,7 @@ func clamp(y float64) uint8 {
 	}
 	return uint8(math.Round(y))
 }
+
+func bitShiftCorrection(r, g, b, a uint32) (uint32, uint32, uint32, uint32) {
+	return r >> 8, g >> 8, b >> 8, a >> 8
+}

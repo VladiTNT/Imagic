@@ -132,8 +132,35 @@ func ContrastAndBrightness(img image.Image, contrast, brightness float64) image.
 }
 
 // Blends the image using a color and the draw package.
-func Blend() {
+func Blend(img image.Image, c color.Color) image.Image {
+	width := img.Bounds().Dx()
+	height := img.Bounds().Dy()
 
+	newImg := image.NewRGBA64(img.Bounds())
+
+	for i := range width {
+		for j := range height {
+			oldR32, oldG32, oldB32, oldA := img.At(i, j).RGBA()
+			r32, g32, b32, _ := c.RGBA()
+
+			r := r32 >> 8
+			g := g32 >> 8
+			b := b32 >> 8
+
+			oldR := oldR32 >> 8
+			oldG := oldG32 >> 8
+			oldB := oldB32 >> 8
+
+			newImg.Set(i, j, color.RGBA{
+				R: clamp(float64((oldR + r) / 2)),
+				G: clamp(float64((oldG + g) / 2)),
+				B: clamp(float64((oldB + b) / 2)),
+				A: uint8(oldA),
+			})
+		}
+	}
+
+	return newImg
 }
 
 // Blurs the image by averaging out the pixels.
